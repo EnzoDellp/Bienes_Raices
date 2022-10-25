@@ -1,5 +1,7 @@
 <?php
-require "app.php";
+define("TEMPLATES_URL",__DIR__."/templates");
+define("FUNCIONES_URL",__DIR__."funciones.php");
+define('CARPETA_INAGENES',__DIR__.'/../imagenes/');
 
 function inculirtemplate(string $nombre, bool $inicio = false){
 
@@ -7,12 +9,16 @@ function inculirtemplate(string $nombre, bool $inicio = false){
 
 };
 
-function estaAutenticado() : bool{
+function estaAutenticado(){
     session_start();
-    $auth=$_SESSION["login"];
-    if($auth){
-        return true;
+    if(!$_SESSION["login"]){
+        header("location:/index.php");
     }
+}
 
-    return false;
+function debugear($variable){
+    echo "<pre>";
+    var_dump($variable);
+    echo "</pre>";
+    exit;
 }

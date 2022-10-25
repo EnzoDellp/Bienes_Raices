@@ -6,8 +6,7 @@ if(!$id){
     header("location:index.php");
     
 }
- //importar la conexion
- require "includes/config/database.php";
+require "includes/app.php";
  $db=conectarDB();
  //consultar
  $query="SELECT * FROM propiedades WHERE id= ${id}";
@@ -22,7 +21,7 @@ $propiedad=mysqli_fetch_assoc($resultado);
 
 
 
-require "includes/funciones.php";
+
 
 inculirtemplate("header");
 
