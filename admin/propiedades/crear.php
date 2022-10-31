@@ -26,16 +26,17 @@ $errores=Propiedad::getErrores();
 
 if($_SERVER["REQUEST_METHOD"]==="POST"){
     //crea una nueva instancia
-    $propiedad=new Propiedad($_POST);
+    $propiedad=new Propiedad($_POST["propiedad"]);
+   
 
 
 
 //generar un nombre unico para cada imagen
 $nombreImagen=md5(uniqid(rand(),true)).".jpg";
 //crear carpeta
-
-if($_FILES['imagen']['tmp_name']){
-    $image = Image::make($_FILES['imagen']['tmp_name'])->fit(800,600);    
+//resize a la imagen
+if($_FILES['propiedad']['tmp_name']['imagen']){
+    $image = Image::make($_FILES['propiedad']['tmp_name']['imagen'])->fit(800,600);    
     $propiedad->setImagen($nombreImagen);
     
  }

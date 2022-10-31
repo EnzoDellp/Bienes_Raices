@@ -43,12 +43,19 @@ class Propiedad{
         $this->vendedores_id = $args['vendedores_id'] ?? 1;
     }
 
-
     public function guardar(){
-        //sanetizar los datos
+        if(isset($this->id)){
+            //actualizar
+            $this->actualizar();
+        }else{
+            //crear uno nuevo
+            $this->crear();
+        }
+    }
 
+    public function crear(){
+     
         $atributos=$this->sanitizarAtributos();
-
      //*insertar en la base de datos
      //?forma vista en el curso
     //  $query="INSERT INTO propiedades(";
@@ -65,6 +72,25 @@ class Propiedad{
     //   debugear($query);
      $resultado=self::$db->query($query);
         return $resultado;
+    }
+
+    public function actualizar(){
+         //sanetizar los datos
+
+         $atributos=$this->sanitizarAtributos();
+         $valores=[];
+         foreach($atributos as $key =>$value){
+            $valores[]= "{$key}='{$value}'";
+         }
+         $query="UPDATE propiedades SET ";
+         $query.= join(', ',$valores); 
+         $query.="WHERE id ='".self::$db->escape_string($this->id) . "'";
+         $query.="LIMIT 1";
+         $resultado= self::$db->query($query);
+         if ($resultado) {
+            //reedirecion al usuario
+            header("location:/admin/index.php?resultado3=2");
+              }
     }
 
     //identificar y unir los atributos de la BD
@@ -92,7 +118,15 @@ class Propiedad{
 
     //subida de archivos
     public function setImagen($imagen){
+        //Elimina la imagen anterior
+        if(isset($this->id)){
+            //comprobar si existe la imagen
+            $existeArchivo=file_exists(CARPETA_INAGENES.$this->imagen);
+            if ($existeArchivo){
+                unlink(CARPETA_INAGENES.$this->imagen);
 
+            }
+        }
         //asignar el atributo de imagen el nombre de la imagen
         if ($imagen){
             $this->imagen=$imagen;
@@ -130,16 +164,16 @@ public function validar(){
       if (!$this->vendedores_id) {
          self::$errores[]="Debes elegir un vendedor";
       }
-      if (!$this->imagen){
-         self::$errores[]="la imagen es obligatoria";
-      };
+    //   if (!$this->imagen){
+    //      self::$errores[]="la imagen es obligatoria";
+    //   };
  
    
       return self::$errores;
      
 }
 
-//lista todas las propiedades
+//lista todos los registros
 
 public static function all(){
     $query="SELECT * FROM propiedades";
@@ -148,6 +182,17 @@ public static function all(){
 
     return $resultado;
 }
+//busca una propiedad por su id
+public static function find($id){
+    $query="SELECT * FROM propiedades WHERE id=${id}";
+    
+    //consulta para obtener los vendedores
+    $resultado =self::consultarSQL($query);
+
+    return (array_shift($resultado));
+
+}
+
 public static function consultarSQL($query){
 
     //consultar bd
@@ -176,6 +221,16 @@ protected static function crearObjeto($registro){
         }
     }
     return $objeto;
+
 }
+
+//sincroniza el objeto en memoria con los cambios realizaods por el usuario
+    public function sincronizar($args = [] ){
+        foreach($args as $key => $value){
+            if(property_exists($this,$key) && !is_null($value)){
+                $this->$key=$value;
+            }
+        }
+    }
 }
 
