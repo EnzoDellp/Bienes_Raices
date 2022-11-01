@@ -44,7 +44,8 @@ class Propiedad{
     }
 
     public function guardar(){
-        if(isset($this->id)){
+        
+        if(!is_null($this->id)){
             //actualizar
             $this->actualizar();
         }else{
@@ -71,7 +72,11 @@ class Propiedad{
     
     //   debugear($query);
      $resultado=self::$db->query($query);
-        return $resultado;
+            //mensaje de exito o error
+    if ($resultado) {
+        //reedirecion al usuario
+        header("location:/admin/index.php?resultado3=1");
+          }
     }
 
     public function actualizar(){
@@ -92,7 +97,17 @@ class Propiedad{
             header("location:/admin/index.php?resultado3=2");
               }
     }
+    //eliminar registro
+    public function eliminar(){
+        $query = "DELETE FROM propiedades WHERE id =".self::$db->escape_string($this->id)." LIMIT 1";
+        $resultado=self::$db->query($query);
+        
 
+        if($resultado) {
+            $this->borrarImagen();
+            header('location: /admin/index.php');
+        }
+    }   
     //identificar y unir los atributos de la BD
     public function atributos(){
         $atributos=[];
@@ -119,20 +134,26 @@ class Propiedad{
     //subida de archivos
     public function setImagen($imagen){
         //Elimina la imagen anterior
-        if(isset($this->id)){
-            //comprobar si existe la imagen
-            $existeArchivo=file_exists(CARPETA_INAGENES.$this->imagen);
-            if ($existeArchivo){
-                unlink(CARPETA_INAGENES.$this->imagen);
-
-            }
+        if(!is_null($this->id)){
+           $this->borrarImagen();
         }
         //asignar el atributo de imagen el nombre de la imagen
         if ($imagen){
             $this->imagen=$imagen;
         }
     }
-    
+    //Eliminar el archivo
+    public function borrarImagen(){
+      //Elimina la imagen anterior
+      if(!is_null($this->id)){
+        //comprobar si existe la imagen
+        $existeArchivo=file_exists(CARPETA_INAGENES.$this->imagen);
+        if ($existeArchivo){
+            unlink(CARPETA_INAGENES.$this->imagen);
+
+        }
+    }  
+    }
 //validacion
 
 public static function getErrores(){

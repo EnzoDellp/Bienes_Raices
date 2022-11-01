@@ -69,13 +69,9 @@ if($_FILES['propiedad']['tmp_name']['imagen']){
         $image ->save(CARPETA_INAGENES.$nombreImagen);
 
         //guardar en la base de datos
-       $resultado=$propiedad->guardar();
+       $propiedad->guardar();
 
-        //mensaje de exito o error
-    if ($resultado) {
-      //reedirecion al usuario
-      header("location:/admin/index.php?resultado3=1");
-        }
+   
     }
 }
 
