@@ -4,11 +4,12 @@
     estaAutenticado();
 
 use APP\Propiedad;
+use App\Vendedor;
 
 //metodo para obtener todas las propiedades
 
 $propiedades=Propiedad::all();
-
+$vendedores=Vendedor::all();
 
 
     // Muestra mensaje condicional
