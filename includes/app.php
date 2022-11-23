@@ -1,15 +1,12 @@
-<?php
+<?php 
 
-require "funciones.php";
-//conexion a db
-require "config/database.php";
-//composer
-require __DIR__."/../vendor/autoload.php";
+require 'funciones.php';
+require 'config/database.php';
+require __DIR__ . '/../vendor/autoload.php';
 
-//conencatar a la bd
-$db=conectarDB();
+// Conectarnos a la base de datos
+$db = conectarDB();
 
-use App\Propiedad;
+use App\Active_Record;
 
-Propiedad::setDB($db);
-
+Active_record::setDB($db);

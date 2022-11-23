@@ -12,23 +12,18 @@ class Active_Record{
     //errores
     protected static $errores=[];
 
-  
-
-
     //definir la conexion a la BD
     public static function setDB($database){
-        self :: $db = $database;
+        self::$db = $database;
     }
 
  
-
-    public function guardar(){
-        
-        if(!is_null($this->id)){
-            //actualizar
+    public function guardar() {
+        if(!is_null($this->id)) {
+            // actualizar
             $this->actualizar();
-        }else{
-            //crear uno nuevo
+        } else {
+            // Creando un nuevo registro
             $this->crear();
         }
     }
@@ -58,39 +53,43 @@ class Active_Record{
           }
     }
 
-    public function actualizar(){
-         //sanetizar los datos
+    public function actualizar() {
 
-         $atributos=$this->sanitizarAtributos();
-         $valores=[];
-         foreach($atributos as $key =>$value){
-            $valores[]= "{$key}='{$value}'";
-         }
-         $query="UPDATE ".static::$tabla  ."SET ";
-         $query.= join(', ',$valores); 
-         $query.="WHERE id ='".self::$db->escape_string($this->id) . "'";
-         $query.="LIMIT 1";
-         $resultado= self::$db->query($query);
-         if ($resultado) {
-            //reedirecion al usuario
-            header("location:/admin/index.php?resultado3=2");
-              }
+        // Sanitizar los datos
+        $atributos = $this->sanitizarAtributos();
+
+        $valores = [];
+        foreach($atributos as $key => $value) {
+            $valores[] = "{$key}='{$value}'";
+        }
+
+        $query = "UPDATE " . static::$tabla ." SET ";
+        $query .=  join(', ', $valores );
+        $query .= " WHERE id = '" . self::$db->escape_string($this->id) . "' ";
+        $query .= " LIMIT 1 "; 
+
+        $resultado = self::$db->query($query);
+
+        if($resultado) {
+            // Redireccionar al usuario.
+            header('Location: /admin/index.php');
+        }
     }
     //eliminar registro
-    public function eliminar(){
-        $query = "DELETE FROM". static::$tabla ."WHERE id =".self::$db->escape_string($this->id)." LIMIT 1";
-        $resultado=self::$db->query($query);
-        
+    public function eliminar() {
+        // Eliminar el registro
+        $query = "DELETE FROM "  . static::$tabla . " WHERE id = " . self::$db->escape_string($this->id) . " LIMIT 1";
+        $resultado = self::$db->query($query);
 
         if($resultado) {
             $this->borrarImagen();
             header('location: /admin/index.php');
         }
-    }   
+    }  
     //identificar y unir los atributos de la BD
     public function atributos(){
         $atributos=[];
-        foreach(self::$columnasDB as $columna){
+        foreach(static::$columnasDB as $columna){
             if ($columna ==="id") continue;
             $atributos[$columna]=$this->$columna;
         }
@@ -136,40 +135,13 @@ class Active_Record{
 //validacion
 
 public static function getErrores(){
-    return self::$errores;
+    return static::$errores;
 }
 
 
 public function validar(){
-    
-    if (!$this->titulo) {
-        self::$errores[]="Debes añadir un titulo";
-     }
-    
-     if (!$this->precio) {
-         self::$errores[]="Debes añadir un precio";
-      }
-      if ( strlen($this->descripcion)<50) {
-         self::$errores[]="La descripcion es obligatioria y debe tener al menos 50 caracteres";
-      }
-      if (!$this->habitaciones) {
-         self::$errores[]="Debes Añadir un numero de habitaciones";
-      }
-      if (!$this->wc) {
-         self::$errores[]="Debes Añadir un numero de baños";
-      }
-      if (!$this->estacionamiento) {
-         self::$errores[]="Debes Añadir un numero de estaciomanientos";
-      }
-      if (!$this->vendedores_id) {
-         self::$errores[]="Debes elegir un vendedor";
-      }
-    //   if (!$this->imagen){
-    //      self::$errores[]="la imagen es obligatoria";
-    //   };
- 
-   
-      return self::$errores;
+    static::$errores=[];
+      return static::$errores;
      
 }
 
@@ -184,15 +156,14 @@ public static function all(){
     return $resultado;
 }
 //busca una propiedad por su id
-public static function find($id){
-    $query="SELECT * FROM ". static::$tabla."WHERE id=${id}";
-    
-    //consulta para obtener los vendedores
-    $resultado =self::consultarSQL($query);
+public static function find($id) {
+    $query = "SELECT * FROM " . static::$tabla  ." WHERE id = ${id}";
 
-    return (array_shift($resultado));
+    $resultado = self::consultarSQL($query);
 
+    return array_shift( $resultado ) ;
 }
+
 
 public static function consultarSQL($query){
 
@@ -202,7 +173,7 @@ public static function consultarSQL($query){
     //iterar los resultados
     $array=[];
     while ($registro=$resultado->fetch_assoc()){
-        $array[]=self::crearObjeto($registro);
+        $array[]=static::crearObjeto($registro);
     }
     
     //liberar la memoria

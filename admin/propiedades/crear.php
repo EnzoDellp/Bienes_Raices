@@ -2,20 +2,19 @@
 require "../../includes/app.php";
 
 
-use APP\Propiedad;
-
+use App\Propiedad;
+use App\Vendedor;
 use Intervention\Image\ImageManagerStatic as Image;
 estaAutenticado();
 
-//base de datos
-$db=conectarDB();
+
 
 $propiedad = new Propiedad;
 
 //consulta para obtener vendeores
+$vendedores=Vendedor::all();
 
-$consulta="SELECT * FROM vendedores";
-$res=mysqli_query($db,$consulta);
+
 
 // arreglo con mensajes de errores
 $errores=Propiedad::getErrores();

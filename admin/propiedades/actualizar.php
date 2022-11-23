@@ -1,12 +1,13 @@
 <?php
 
-use APP\Propiedad;
+use App\Propiedad;
+use App\Vendedor;
 
 require "../../includes/app.php";
 
 use Intervention\Image\ImageManagerStatic as Image;
 
-$auth=estaAutenticado();
+
 estaAutenticado();
 
 
@@ -21,9 +22,7 @@ if (!$id) {
 $propiedad=Propiedad::find($id);
 
 //consulta para obtener vendeores
-
-$consulta="SELECT * FROM vendedores";
-$res=mysqli_query($db,$consulta);
+$vendedores=Vendedor::all();
 
 // arreglo con mensajes de errores
 $errores=Propiedad::getErrores();
@@ -52,14 +51,16 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
 
      //verificar que el arreglo de errores este vacio
      if (empty($errores)) {
+        if($_FILES['propiedad']['tmp_name']['imagen']){
         //guardar la imganen
         $image->save(CARPETA_INAGENES.$nombreImagen);
-      $resultado=$propiedad->guardar();
+    }
+     
         
           //*insertar en la base de datos
         $propiedad->guardar();
           
-    
+
 
 
     if ($resultado) {
@@ -78,27 +79,24 @@ inculirtemplate("header");
 ?>
 
 
-    <main class="contenedor seccion">
+  
+<main class="contenedor seccion">
+        <h1>Actualizar Propiedad</h1>
 
+        <a href="/admin/index.php" class="boton boton-verde">Volver</a>
 
-        <h1>Actualizar</h1>
-        <a href="/admin/index.php" class="boton boton-verde" >Volver</a>
+        <?php foreach($errores as $error): ?>
+        <div class="alerta error">
+            <?php echo $error; ?>
+        </div>
+        <?php endforeach; ?>
 
-        <?php foreach($errores as $error):?>
-            <div class="alerta error">
-            <?php echo$error;?>
-            </div>
-        <?php endforeach;?>
+        <form class="formulario" method="POST" enctype="multipart/form-data">
+            <?php include '../../includes/templates/formulario_propiedades.php'; ?>
 
-    <!--post para informacion segura como passwords/ get para pasar info a otra pagina -->
-        <form class="formulario" method="POST"  enctype="multipart/form-data">
-        <?php include "../../includes/templates/formulario_propiedades.php" ?>
-
-                    
-        <input type="submit" value="Actualizarl Propiedad"  class="boton boton-verde" >
+            <input type="submit" value="Actualizar Propiedad" class="boton boton-verde">
         </form>
-
-
+        
     </main>
 
     <?php 
