@@ -1,12 +1,15 @@
 @include tablet {
     .contenedor-anuncios {
         @include grid(3, 2rem);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+
     }
 }
 
 .anuncio {
     background-color: lighten($gris, 5);
     border: 1px solid darken($gris, 10);
+    
     margin-bottom: 2rem;
 
     .contenido-anuncio {
@@ -29,6 +32,7 @@
     list-style: none;
     padding: 0;
     max-width: 40rem;
+    object-fit: contain;
 
     li {
         flex: 1;
@@ -37,6 +41,7 @@
         img {
             flex:  0 0 3rem;
             margin-right: 1rem;
+            max-width: 100%;
         }
         p {
             font-weight: $black;
